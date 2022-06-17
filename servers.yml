@@ -5,13 +5,44 @@ Parameters:
     Description: An environment name that will be prefixed to resource names
     Type: String
 
+  InstanceType:
+    Description: EC2 Instance type
+    Type: String
+    Default: t3.medium
+
+  vpcCIDR:
+    Description: VPC CIDR
+    Type: String
+    Default: 10.0.0.0/16
+
+  PrivSubnet1CIDR:
+    Description: Private Subnet 1 CIDR
+    Type: String
+    Default: 10.0.3.0/24
+
+  PrivSubnet2CIDR:
+    Description: Private Subnet 2 CIDR
+    Type: String
+    Default: 10.0.4.0/24
+
+  PubSubnet1CIDR:
+    Description: Public Subnet 1 CIDR
+    Type: String
+    Default: 10.0.1.0/24
+
+  PubSubnet2CIDR:
+    Description: Public Subnet 2 CIDR
+    Type: String
+    Default: 10.0.2.0/24
+
 Resources:
   # Load Balancer Security Group
   LBSecGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow HTTP to our load balancer
-      VpcId: !Ref UdacityProjectVPC
+      VpcId:
+        - Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
@@ -28,7 +59,8 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow HTTP to our hosts and SSH from local only
-      VpcId: !Ref UdacityProjectVPC
+      VpcId:
+        - Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
@@ -57,7 +89,8 @@ Resources:
           cd /var/www/html
           echo "Udacity Demo Web Server Up and Running!" > index.html
       ImageId: ami-005de95e8ff495156
-      IamInstanceProfile: !Ref EC2InstanceProfile
+      IamInstanceProfile:
+        - Fn::ImportValue: !Sub "${EnvironmentName}-EC2InstanceProfile"
       SecurityGroups:
         - !Ref LBSecGroup
         - !Ref ServerSecGroup
@@ -125,14 +158,16 @@ Resources:
       Port: 80
       Protocol: HTTP
       UnhealthyThresholdCount: 5
-      VpcId: !Ref UdacityProjectVPC
+      VpcId:
+        - Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
 
   # JumpBox Security Group
   JumpBoxSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: "Jumpbox Security Group"
-      VpcId: !Ref UdacityProjectVPC
+      VpcId:
+        - Fn::ImportValue: !Sub "${EnvironmentName}-VPC"
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -158,7 +193,7 @@ Resources:
           GroupSet:
             - Ref: "JumpBoxSecurityGroup"
           SubnetId:
-            Fn:ImportValue: !Sub "${EnvironmentName}-PUB1-SN"
+            Fn::ImportValue: !Sub "${EnvironmentName}-PUB1-SN"
 
   JumpBox2:
     Type: AWS::EC2::Instance
@@ -173,7 +208,7 @@ Resources:
           GroupSet:
             - Ref: "JumpBoxSecurityGroup"
           SubnetId:
-            Fn:ImportValue: !Sub "${EnvironmentName}-PUB2-SN"
+            - Fn::ImportValue: !Sub "${EnvironmentName}-PUB2-SN"
 
 Outputs:
   LoadBalancerDNS:

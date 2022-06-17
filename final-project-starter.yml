@@ -381,8 +381,7 @@ Resources:
           DeviceIndex: "0"
           GroupSet:
             - Ref: "JumpBoxSecurityGroup"
-          SubnetId:
-            Fn:ImportValue: !Ref PublicSubnet1
+          SubnetId: !Ref PublicSubnet1
 
   JumpBox2:
     Type: AWS::EC2::Instance
@@ -446,3 +445,9 @@ Outputs:
     Value: !Ref PrivateSubnet2
     Export:
       Name: !Sub ${EnvironmentName}-PRIV2-SN
+
+  LoadBalancerDNS:
+    Description: The DNS name of the load balancer
+    Value: !Join ["http://", [!GetAtt WebAppLB.DNSName]]
+    Export:
+      Name: !Sub ${EnvironmentName}-LB-DNS

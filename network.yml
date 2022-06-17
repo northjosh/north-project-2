@@ -231,6 +231,10 @@ Resources:
       SubnetId: !Ref PrivateSubnet2
 
 Outputs:
+  EC2InstanceProfile:
+    Value: !Ref EC2InstanceProfile
+    Export:
+      Name: !Sub ${EnvironmentName}-EC2InstanceProfile
   VPC:
     Description: A reference to the created VPC
     Value: !Ref UdacityProjectVPC
