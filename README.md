@@ -20,7 +20,7 @@ Parameters for the Code.
 
 #### final-project-starter.yml
 
-Contains combined network and server CloudFormation code.
+Launch Template containing network and server CloudFormation code required for project.
 
 #### create.sh, update.sh
 
