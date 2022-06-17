@@ -8,22 +8,32 @@ Parameters:
   InstanceType:
     Description: EC2 Instance type
     Type: String
+    Default: t3.medium
 
   vpcCIDR:
     Description: VPC CIDR
     Type: String
+    Default: 10.0.0.0/16
 
   PrivSubnet1CIDR:
+    Description: Private Subnet 1 CIDR
     Type: String
+    Default: 10.0.3.0/24
 
   PrivSubnet2CIDR:
+    Description: Private Subnet 2 CIDR
     Type: String
+    Default: 10.0.4.0/24
 
   PubSubnet1CIDR:
+    Description: Public Subnet 1 CIDR
     Type: String
+    Default: 10.0.1.0/24
 
   PubSubnet2CIDR:
+    Description: Public Subnet 2 CIDR
     Type: String
+    Default: 10.0.2.0/24
 
 Resources:
   # Role, Policy and Instance Profile to allow Instances access to S3 Service
